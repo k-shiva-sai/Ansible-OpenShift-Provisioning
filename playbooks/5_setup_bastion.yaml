@@ -81,6 +81,7 @@
     stat:
       path: "{{ inventory_dir }}/host_vars/{{ env.cluster.nodes.bootstrap.vm_name }}.yaml"
     register: vars_file
+    delegate_to: localhost
   - name: Include the vars
     include_vars:
       file: "{{ inventory_dir }}/host_vars/{{ env.cluster.nodes.bootstrap.vm_name }}.yaml"

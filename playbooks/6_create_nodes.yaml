@@ -53,6 +53,7 @@
         node_type: "bootstrap"
         node_name: "{{ item }}"
         ignition: "bootstrap"
+        mac: "{{ env.cluster.nodes[node_type].mac }}"
       include_tasks:
         file: ../roles/boot_LPAR/tasks/main.yaml
       loop: "{{ q('list',env.cluster.nodes[node_type].vm_name) | flatten }}"
@@ -63,9 +64,12 @@
         node_type: "control"
         node_name: "{{ item }}"
         ignition: "master"
+        mac: "{{ env.cluster.nodes[node_type].mac[idx] }}"
       include_tasks:
         file: ../roles/boot_LPAR/tasks/main.yaml
       loop: "{{ q('list',env.cluster.nodes[node_type].vm_name) | flatten }}"
+      loop_control:
+        index_var: idx
       when: item in hosts_with_host_vars
 
 - name: 6 create nodes - create control nodes
@@ -129,7 +133,10 @@
         node_type: "compute"
         node_name: "{{ item }}"
         ignition: "worker"
+        mac: "{{ env.cluster.nodes[node_type].mac[idx] }}"
       include_tasks:
         file: ../roles/boot_LPAR/tasks/main.yaml
       loop: "{{ q('list',env.cluster.nodes[node_type].vm_name) | flatten }}"
+      loop_control:
+        index_var: idx
       when: env.cluster.nodes[node_type].vm_name is defined and item in hosts_with_host_vars
